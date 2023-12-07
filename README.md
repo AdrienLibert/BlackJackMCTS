@@ -36,7 +36,7 @@ Repeating this process thousands of times, the algorithm averages out results to
 # Run the Blackjack Monte Carlo simulation
 
 Install Dependencies:
-'pip install -r requirements.txt'
+`pip install -r requirements.txt`
 
 Run the Simulation:
-'python Gameplay_Simulation.py'
+`pip install -r requirements.txt`
