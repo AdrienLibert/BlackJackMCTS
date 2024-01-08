@@ -162,7 +162,7 @@ def simulate_games(number_of_games, strategy):
         dealer_hand = deal_hand(deck)
         
         if strategy == "mcts":
-            player_hand = mcts(BlackjackNode(player_hand, dealer_hand, deck), iterations=1000)
+            player_hand = mcts(BlackjackNode(player_hand, dealer_hand, deck), iterations=10000)
         else:
             player_hand = apply_strategy(player_hand, dealer_hand, strategy)
         
