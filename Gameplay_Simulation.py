@@ -1,5 +1,4 @@
 import nbimporter
-from Strategy import apply_strategy
 from Generate_deck import generate_deck
 from Deal_hand import deal_hand
 import gym
