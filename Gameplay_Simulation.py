@@ -1,5 +1,6 @@
 import nbimporter
 from Generate_deck import generate_deck
+from QLearning import BlackjackAgent
 from Deal_hand import deal_hand
 import gym
 from Generate_MCTS import simulate_games
@@ -22,9 +23,19 @@ def main():
             results = simulate_games(number_of_games)
             print("Simulation results:", results)
         elif choice == "2":
-            pass
+            number_of_games = int(input("Enter the number of games to simulate: "))
+            results = simulate_rl(number_of_games)
+            print("Simulation results:", results)
+
         elif choice == "3":
-            pass
+            learning_rate = 0.1
+            initial_epsilon = 1.0
+            epsilon_decay = 0.995
+            final_epsilon = 0.01
+            blackjack_agent = BlackjackAgent(learning_rate, initial_epsilon, epsilon_decay, final_epsilon)
+            number_of_games = int(input("Enter the number of games to simulate: "))
+            results = simulate_g(number_of_games, blackjack_agent)
+            print("Simulation results:", results)
         elif choice == "4":
             print("Exiting the simulator.")
             break

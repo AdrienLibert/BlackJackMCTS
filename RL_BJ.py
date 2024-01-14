@@ -4,9 +4,9 @@ import gym
 from QLearning import BlackjackAgent
 from tqdm import tqdm
 
-def simulate_rl(number_of_games):
+def simulate_rl(number_of_games, training_episodes=15000):
     # Paramètres de l'agent d'apprentissage par renforcement
-    learning_rate = 0.01
+    learning_rate = 0.005
     start_epsilon = 1.0
     epsilon_decay = 0.1
     final_epsilon = 0.01
@@ -20,8 +20,17 @@ def simulate_rl(number_of_games):
     )
     # Création de l'environnement de jeu Blackjack
     env = gym.make('Blackjack-v1')
+    for episode in tqdm(range(training_episodes)):
+        obs = env.reset()
+        done = False
+        while not done:
+            action = agent.get_action(obs)
+            next_obs, reward, done, _ = env.step(action)[:4]
+            agent.update(obs, action, reward, done, next_obs)
+            obs = next_obs
+        agent.decay_epsilon()
 
-    # Initialisation des résultats
+    # Phase de simulation
     results = {'wins': 0, 'losses': 0, 'draws': 0}
 
     # Boucle sur le nombre de parties à simuler
