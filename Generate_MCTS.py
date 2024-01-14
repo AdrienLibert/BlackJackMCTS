@@ -85,6 +85,7 @@ def simulate(node):
         play_dealer(node)
     return 1 if player_score <= 21 else 0
 
+
 # Rétro-propagation des résultats de simulation vers le nœud parent
 def backpropagate(node, result):
     while node:
@@ -100,21 +101,18 @@ def play_dealer(node):
 
     while dealer_score < 17:
         drawn_card = draw_card(node.deck)
+        dealer_hand.append(drawn_card)
 
-        if drawn_card['value'] in ['10', 'J', 'Q', 'K']:
-            dealer_score += 10
+        if drawn_card['value'] in ['J', 'Q', 'K']:
             node.countCard -= 1
-        elif drawn_card['value'] in ['A']:
+        elif drawn_card['value'] == 'A':
             node.countCard -= 1
-            if dealer_score > 11:
-                dealer_score += 1
-            else:
-                dealer_score += 10
-        elif drawn_card['value'] in ['7', '8', '9']:
-            dealer_score += int(drawn_card['value'])
-        else:
-            dealer_score += int(drawn_card['value'])
-            node.countCard += 1
+
+        dealer_score = calculate_score(dealer_hand)
+
+    node.dealer_hand = dealer_hand
+
+
 
 # Sélection du meilleur enfant en utilisant l'UCT
 def best_uct(node):
@@ -258,7 +256,7 @@ def simulate_games(number_of_games):
         print(f"Player's hand: {format_hand(player_hand)}")
         print(f"Dealer's hand: {format_hand(dealer_hand, hide_second_card=True)}")
 
-        node = mcts(BlackjackNode(player_hand, dealer_hand, deck), iterations=2000)
+        node = mcts(BlackjackNode(player_hand, dealer_hand, deck), iterations=10000)
 
         while calculate_score(dealer_hand) < 17:
             draw_card_dealer(deck, dealer_hand)

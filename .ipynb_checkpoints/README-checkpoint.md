@@ -1,42 +1,27 @@
-## Blackjack Monte Carlo Simulation
-
+## Simulation de Blackjack Monte Carlo
 # Introduction
-Blackjack, originally known as "Vingt et un" (Twenty-One), has its roots in 18th-century French casinos. 
-Gaining popularity among figures like Madame du Barry and Napoleon, the game crossed the Atlantic post-Revolution, evolving into the Blackjack we know today in American gambling circles. 
-The game's core remains unchanged: players aim to beat the dealer without exceeding a total card value of 21.
+Le Blackjack, initialement connu sous le nom de "Vingt et un", trouve ses origines dans les casinos français du XVIIIe siècle.
+Gagnant en popularité auprès de figures telles que Madame du Barry et Napoléon, le jeu a traversé l'Atlantique après la Révolution, évoluant vers le Blackjack que nous connaissons aujourd'hui dans les cercles de jeu américains.
+Le cœur du jeu reste inchangé : les joueurs cherchent à battre le croupier sans dépasser une valeur totale de carte de 21.
 
-# Rules Overview
-Card Values: Number cards are worth their face value, face cards are worth 10, and Aces can be 1 or 11.
-The Deal: Each player and the dealer start with two cards. The dealer has one card face down.
-Player's Turn: Players can hit (ask for more cards), stand (keep their current hand), double down (double the bet for one more card), or split (if they have two cards of the same value).
-Special Cases: Players can take insurance against the dealer's potential blackjack.
-Winning and Losing: Players bust and lose if they exceed 21. Otherwise, higher hand values than the dealer's win.
-Strategies
-Basic Strategy: A set of rules for the best mathematical action based on the player's hand and the dealer's visible card.
-Simple Strategy: A less detailed, more general approach than Basic Strategy.
-Card Counting: Advanced strategy involving tracking high and low cards to inform betting and playing decisions.
-Monte Carlo Simulation
-We employ the Monte Carlo method to simulate thousands of Blackjack games, analyzing the effectiveness of different strategies.
+# Règles du Jeu
+Valeurs des Cartes : Les cartes numérotées valent leur valeur faciale, les figures valent 10, et les As peuvent valoir 1 ou 11.
+La Donne : Chaque joueur et le croupier commencent avec deux cartes. Le croupier a une carte face cachée.
+Tour du Joueur : Les joueurs peuvent tirer (demander plus de cartes), rester (conserver leur main actuelle), doubler (doubler la mise pour une carte supplémentaire) ou séparer (si elles ont deux cartes de même valeur).
+Gagner et Perdre : Les joueurs font faillite et perdent s'ils dépassent 21. Sinon, des valeurs de main plus élevées que celles du croupier gagnent.
 
-# Key Components
+# Simulation Monte Carlo
+Nous employons la méthode de Monte Carlo et du Q learning pour simuler des milliers de parties de Blackjack, analysant l'efficacité de différentes méthodes.
 
-Random Deck Generator (generate_deck): Generates a shuffled 52-card deck.
-Card Distribution (deal_hand): Deals two cards to players and the dealer.
-Strategy Implementation (apply_strategy): Simulates player decisions based on their hand, the dealer's visible card, and a chosen strategy.
-Gameplay Simulation (play_game): Plays out a hand of Blackjack following the game rules and strategies.
-Simulation and Result Recording (simulate_games): Repeats gameplay to record results and assess strategy effectiveness.
-Process
+# Composants Clés
+La simulation commence avec un deck aléatoire (generate_deck pour le MCTS et environnement gym pour le Q learning) et distribue des mains aux joueurs et au croupier.
+Le croupier suit un ensemble de règles fixes.
+La simulation enregistre les victoires, les défaites ou les égalités.
 
-The simulation starts with a random deck and deals hands to players and the dealer.
-Players play according to their chosen strategy (Basic, Simple, or Card Counting).
-The dealer follows a set of fixed rules (e.g., hitting until reaching 17 or higher).
-The simulation records wins, losses, or ties.
-Repeating this process thousands of times, the algorithm averages out results to determine the most effective strategy.
+# Exécution de la simulation de Blackjack Monte Carlo
+Installation des Dépendances :
 
-# Run the Blackjack Monte Carlo simulation
+'pip install -r requirements.txt'
+Lancer la Simulation :
 
-Install Dependencies:
-`pip install -r requirements.txt`
-
-Run the Simulation:
-`python Gameplay_Simulation.py`
+'python Gameplay_Simulation.py'

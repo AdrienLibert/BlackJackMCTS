@@ -25,7 +25,7 @@ def mcts(node, blackjack_agent, iterations):
         selected_node = select(node, blackjack_agent)
         expanded_node = expand(selected_node)
         simulation_result, is_terminal, action_taken = simulate(expanded_node, blackjack_agent)
-        backpropagate(expanded_node, simulation_result, action_taken)
+        backpropagate(expanded_node, simulation_result, action_taken, blackjack_agent)  # Pass blackjack_agent here
     return best_child(node).player_hand
 
 
@@ -65,30 +65,33 @@ def simulate(node, blackjack_agent):
         node.player_hand = player_hand
 
     reward, is_terminal = calculate_reward_and_terminal(node)
-    next_obs = [get_state_index_from_node(node)]
-
-    blackjack_agent.update(get_state_index_from_node(node), action, reward, is_terminal, next_obs)
+    next_node = node.parent if node.parent is not None else node
+    blackjack_agent.update([get_state_index_from_node(node)], action, reward, is_terminal, [get_state_index_from_node(next_node)])
     blackjack_agent.decay_epsilon()
 
     current_state_index = [get_state_index_from_node(node)]
-    next_state_index = [get_state_index_from_node(node.parent)] if node.parent else [current_state_index[0]]
+    next_state_index = [get_state_index_from_node(next_node)]
 
     blackjack_agent.update(current_state_index, action, reward, is_terminal, next_state_index)
-
 
     return reward, is_terminal, action
 
 
-def backpropagate(node, result, action_taken):
+
+def backpropagate(node, result, action_taken, blackjack_agent):
     while node is not None:
         node.visits += 1
         if result is not None:
             node.wins += result
         if node.parent is not None:
-            state_index = get_state_index_from_node(node)
-            next_state_index = get_state_index_from_node(node.parent)
-            blackjack_agent.update(state_index, action_taken, result, next_state_index)
+            state_index = [get_state_index_from_node(node)]
+            next_state_index = [get_state_index_from_node(node.parent)]
+            blackjack_agent.update(state_index, action_taken, result, False, next_state_index)
+        else:
+            state_index = [get_state_index_from_node(node)]
+            blackjack_agent.update(state_index, action_taken, result, True, state_index)
         node = node.parent
+
 
 
 def best_uct_q(node, blackjack_agent):
@@ -107,7 +110,7 @@ def best_uct_q(node, blackjack_agent):
 
     return max(node.children, key=uct_q_value)
 
-
+# Retourne le meilleur enfant d'un nœud
 def best_child(node):
     best_child = max(node.children, key=lambda child: child.wins)
     return best_child
@@ -156,7 +159,7 @@ def calculate_score(hand):
 
     return score
 
-
+#Obtient l'indice d'état pour le reinforcement à partir d'un nœud
 def get_state_index_from_node(node):
     total_hand = calculate_score(node.player_hand)
     has_usable_ace = "A" in [card['value'] for card in node.player_hand] and total_hand + 10 <= 21
@@ -197,38 +200,39 @@ def deal_hand(deck, num_cards=2):
     return hand
 
 
-def simulate_games(number_of_games, blackjack_agent):
+def simulate_g(number_of_games, blackjack_agent):
     results = {'wins': 0, 'losses': 0, 'draws': 0}
-    for _ in range(number_of_games):
+    for game_number in range(number_of_games):
         deck = generate_deck()
         player_hand = deal_hand(deck)
         dealer_hand = deal_hand(deck)
 
-        mcts_decision = mcts(BlackjackNode(player_hand, dealer_hand, deck, None, False), blackjack_agent, 1000)
+        print(f"Game {game_number + 1}: Starting")
+        print(f"Player's hand: {format_hand(player_hand)}")
+        print(f"Dealer's hand: {format_hand(dealer_hand, hide_second_card=True)}")
+
+        mcts_decision = mcts(BlackjackNode(player_hand, dealer_hand, deck, None, False), blackjack_agent, 100)
+
+        print(f"Final Player's hand: {format_hand(mcts_decision)}")
+        print(f"Final Dealer's hand: {format_hand(dealer_hand)}")
 
         game_result = play_game(mcts_decision, dealer_hand, deck)
         if game_result['result'] == 'win':
             results['wins'] += 1
+            print("Result: Win!")
         elif game_result['result'] == 'loss':
             results['losses'] += 1
+            print("Result: Loss!")
         else:
             results['draws'] += 1
+            print("Result: Draw!")
+
+        print("----------------------------------------------------")
 
     return results
 
 
-
-learning_rate = 0.1
-initial_epsilon = 1.0
-epsilon_decay = 0.995
-final_epsilon = 0.01
-
-# Create an instance of BlackjackAgent
-blackjack_agent = BlackjackAgent(learning_rate, initial_epsilon, epsilon_decay, final_epsilon)
-
-number_of_games = 300
-strategy = "mcts"
-results = simulate_games(number_of_games, blackjack_agent)
-
-print("Simulation results:")
-print(results)
+def format_hand(hand, hide_second_card=False):
+    if hide_second_card:
+        return f"[{hand[0]['value']}, *]"
+    return ', '.join([f"{card['value']}" for card in hand])

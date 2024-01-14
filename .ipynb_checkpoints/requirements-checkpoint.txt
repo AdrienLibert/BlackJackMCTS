@@ -1,2 +1,6 @@
 jupyter==1.0.0
 nbimporter==0.3.4
+gym==0.18.3
+numpy==1.19.2
+tqdm==4.48.2
+
