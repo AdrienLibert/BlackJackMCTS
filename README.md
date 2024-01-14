@@ -29,6 +29,7 @@ La simulation enregistre les victoires, les défaites ou les égalités.
 Installation des Dépendances :
 
 'pip install -r requirements.txt'
+
 Lancer la Simulation :
 
 'python Gameplay_Simulation.py'
