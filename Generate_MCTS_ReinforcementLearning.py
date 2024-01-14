@@ -65,11 +65,7 @@ def simulate(node, blackjack_agent):
         node.player_hand = player_hand
 
     reward, is_terminal = calculate_reward_and_terminal(node)
-
-    # Define next_node here before using it
     next_node = node.parent if node.parent is not None else node
-
-    # Now use next_node
     blackjack_agent.update([get_state_index_from_node(node)], action, reward, is_terminal, [get_state_index_from_node(next_node)])
     blackjack_agent.decay_epsilon()
 
@@ -163,7 +159,7 @@ def calculate_score(hand):
 
     return score
 
-
+#Obtient l'indice d'état pour le reinforcement à partir d'un nœud
 def get_state_index_from_node(node):
     total_hand = calculate_score(node.player_hand)
     has_usable_ace = "A" in [card['value'] for card in node.player_hand] and total_hand + 10 <= 21
