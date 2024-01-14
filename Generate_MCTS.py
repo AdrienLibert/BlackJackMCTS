@@ -234,23 +234,36 @@ def simulate_games(number_of_games):
     for i in range(number_of_games):
         deck = generate_deck()
         player_hand = deal_hand(deck)
-        print(player_hand)
         dealer_hand = deal_hand(deck)
-        print(dealer_hand)
+        
+        print(f"Game {i + 1}: Starting")
+        print(f"Player's hand: {format_hand(player_hand)}")
+        print(f"Dealer's hand: {format_hand(dealer_hand, hide_second_card=True)}")
+
         node = mcts(BlackjackNode(player_hand, dealer_hand, deck), iterations=2000)
-        # Pioche du croupier
+        
         while calculate_score(dealer_hand) < 17:
             draw_card_dealer(deck, dealer_hand)
+
+        print(f"Final Player's hand: {format_hand(node.player_hand)}")
+        print(f"Final Dealer's hand: {format_hand(node.dealer_hand)}")
 
         game_result = play_game(node.player_hand, node.dealer_hand)
         if game_result['result'] == 'win':
             results['wins'] += 1
-            print(f"Game {i + 1}: Win!")
+            print("Result: Win!")
         elif game_result['result'] == 'loss':
             results['losses'] += 1
-            print(f"Game {i + 1}: Loss! ")
+            print("Result: Loss!")
         else:
             results['draws'] += 1
-            print(f"Game {i + 1}: Draw!")
+            print("Result: Draw!")
+
+        print("----------------------------------------------------")
 
     return results
+
+def format_hand(hand, hide_second_card=False):
+    if hide_second_card:
+        return f"[{hand[0]['value']}, *]"
+    return ', '.join([f"{card['value']}" for card in hand])
